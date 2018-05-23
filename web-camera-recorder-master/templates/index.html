@@ -132,6 +132,7 @@
       <img src="/static/image/4.gif" alt="" id="flower" class="display-none">
     </div>
   </div>
+  <audio id="music" src="/static/music.wav"></audio>
   <script>
     const serviceUrl = 'http://172.96.239.77:5000/'
     var box = document.getElementById("box")
@@ -201,6 +202,7 @@
       console.log(max, i)
       if (parseInt(i) >= parseInt(max)) {
         flower.classList.remove("display-none")
+        document.getElementById("music").play();
         clearInterval(addnum);
       } else {
         i++
