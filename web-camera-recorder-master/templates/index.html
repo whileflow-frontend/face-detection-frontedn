@@ -113,10 +113,10 @@
   <div class="bor" id="box" onclick="beMax()">
     <div class="display-none" id="content">
       <div class="person">
-        <img src="/static/image/2.jpg" class="photo" alt="">
+        <img src="/static/image/2.jpg" class="photo" id="photo1" alt="">
       </div>
       <div class="person">
-        <img src="/static/image/3.jpg" class="photo" alt="">
+        <img src="/static/image/3.jpg" class="photo" id="photo2" alt="">
       </div>
 	  <div style="clear:both;"></div>
       <div class="progress">
@@ -140,6 +140,12 @@
         content.classList.add("display-none")
       }
     }
+	function getRandomInt(min, max) {
+		return Math.floor(Math.random() * (max - min + 1) + min);
+	}
+	var photo1 = document.getElementById("photo1")
+	var photo2 = document.getElementById("photo2")
+	
   </script>  
 </body>
 </html>
