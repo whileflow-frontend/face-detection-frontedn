@@ -4,7 +4,7 @@
   <title>Streaming Video Recorder</title>
   <script src="/static/lib/jquery.min.js"></script>
   <style>
-    * {     
+    * {
       margin: 0;
       padding: 0;
     }
@@ -84,19 +84,19 @@
       background-color: #03CE41;
       width: 50%;
     }
-    .fraction {
+    #fraction {
       font-size: 144px;
       font-weight: bolder;
       color: #FE9C05;
       text-align: center;
     }
-    .flower {
+    #flower {
       position: absolute;
       top: 56%;
       width: 360px;
       left: 50%;
       margin-left: -180px;
-    }    
+    }
     #recorder {
       position: absolute;
     }
@@ -124,23 +124,29 @@
       </div>
 	  <div style="clear:both;"></div>
       <div class="progress">
-        <div class="color"></div>
+        <div class="color" id="proValue"></div>
       </div>
-      <p class="fraction">
-        50%
+      <p id="fraction">
+        0%
       </p>
-      <img src="/static/image/4.gif" alt="" class="flower">
+      <img src="/static/image/4.gif" alt="" id="flower" class="display-none">
     </div>
   </div>
   <script>
     const serviceUrl = 'http://172.96.239.77:5000/'
     var box = document.getElementById("box")
     var content = document.getElementById("content")
+    var fractionNum = document.getElementById("fraction")
+    var flower = document.getElementById("flower")
+    var proValue = document.getElementById("proValue")
+    var i
+    var max
+    var addnum
     var capture = false
     checkStatus()
     var statusIntervalId = setInterval(function () {
       checkStatus()
-    }, 500)
+    }, 1000)
     function beMax () {
       if (box.className === 'bor') {
         box.classList.add("max-bor")
@@ -161,9 +167,41 @@
           clearInterval(statusIntervalId)
           beMax()
           $('#video').addClass('not-show')
+          getPic()
         }
       })
     }
-  </script>  
+
+    function getPic () {
+      $.ajax({
+        url: serviceUrl + 'prediction',
+        method: 'GET'
+      })
+      .done(function (res) {
+        if (res) {
+          console.log(res)
+          i = 0
+          max = parseInt(res.score * 100)
+          runNumber()
+        }
+      })
+    }
+
+    // 滚动数字
+    function runNumber () {
+      addnum = setInterval(addNumber, 50);
+    }
+    function addNumber () {
+      fractionNum.innerHTML = i + "%";
+      console.log(max, i)
+      if (parseInt(i) >= parseInt(max)) {
+        flower.classList.remove("display-none")
+        clearInterval(addnum);
+      } else {
+        i++
+        proValue.style.width = i + "%"
+      }
+    }
+  </script>
 </body>
 </html>
