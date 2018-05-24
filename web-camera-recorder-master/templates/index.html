@@ -10,6 +10,16 @@
       margin: 0;
       padding: 0;
     }
+    body {
+      overflow: hidden;
+    }
+    h1 {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      color: #fff;
+      z-index: 10;
+    }
     .pic {
       position: absolute;
       z-index: 1;
@@ -47,11 +57,11 @@
       border: 0 solid rgba(0, 0, 0, 0);
     }
     #content {
-      width: 70%;
+      width: 90%;
       height: 100%;
       padding: 0 15%;
       font-size: 0;
-      //background-color: rgba(0, 0, 0, 0.9);
+      background-color: rgba(0, 0, 0, 0.9);
       overflow: hidden;
     }
     .display-none {
@@ -64,9 +74,9 @@
       justify-content: center;
       float: left;
       font-size: 36px;
-      width: 30%;
-      margin: 0 10%;
-      height: 350px;
+      width: 48%;
+      margin: 0 1%;
+      height: 450px;
     }
     .person >p {
       color: #d8d9da;
@@ -79,6 +89,7 @@
     .photo {
       max-height: 90%;
       max-width: 90%;
+      min-width: 450px;
     }
     .img-block:after {
       content: '';
@@ -201,52 +212,55 @@
   </style>
 </head>
 <body>
-  <!-- <h1>Streaming Video Recorder</h1> -->
-  <div id="recorder">
-    <button id="record">Record</button>
-    <button id="stop">Stop</button>
-    <a id="download"></a>
-    <script type="text/javascript" src="{{ url_for('static', filename='recorder.js') }}"></script>
-  </div>
-
-  <div class="pic">
-    <img id="video" src="{{ url_for('video_viewer') }}">
-  </div>
-  <div class="bor" id="box">
-    <div class="display-none" id="content">
-      <div class="img-block">
-        <div class="person" id="person-1">
-          <img src="/static/image/2.jpg" class="photo" id="photo1" alt="">
-          <p class="not-show">本人</p>
+  <header>
+    <h1>我是大明星</h1>
+  </header>
+  <main>
+    <div id="recorder">
+      <button id="record">Record</button>
+      <button id="stop">Stop</button>
+      <a id="download"></a>
+      <script type="text/javascript" src="{{ url_for('static', filename='recorder.js') }}"></script>
+    </div>
+    <div class="pic">
+      <img id="video" src="{{ url_for('video_viewer') }}">
+    </div>
+    <div class="bor" id="box">
+      <div class="display-none" id="content">
+        <div class="img-block">
+          <div class="person" id="person-1">
+            <img src="/static/image/2.jpg" class="photo" id="photo1" alt="">
+            <p class="not-show">本人</p>
+          </div>
+          <div class="person" id="person-2">
+            <img src="/static/image/3.jpg" class="photo" id="photo2" alt="">
+            <p class="not-show">明星</p>
+          </div>
         </div>
-        <div class="person" id="person-2">
-          <img src="/static/image/3.jpg" class="photo" id="photo2" alt="">
-          <p class="not-show">明星</p>
+        <div id="match-in-progress">
+          <p>匹配中<span class="dot" id="dot-1">.</span><span class="dot not-show" id="dot-2">.</span><span class="dot not-show" id="dot-3">.</span></p>
         </div>
-      </div>
-      <div id="match-in-progress">
-        <p>匹配中<span class="dot" id="dot-1">.</span><span class="dot not-show" id="dot-2">.</span><span class="dot not-show" id="dot-3">.</span></p>
-      </div>
-  	  <div id="result" class="not-show" style="clear:both;">
-        <div id="description"><div class="wrapper"></div></div>
-        <div class="progress">
-          <div class="color" id="proValue"></div>
-        </div>
-        <div class="ratio">
-          <p id="fraction">
-            0%
-          </p>
-          <img src="/static/image/4.gif" alt="" id="flower" class="display-none">
+    	  <div id="result" class="not-show" style="clear:both;">
+          <div id="description"><div class="wrapper"></div></div>
+          <div class="progress">
+            <div class="color" id="proValue"></div>
+          </div>
+          <div class="ratio">
+            <p id="fraction">
+              0%
+            </p>
+            <img src="/static/image/4.gif" alt="" id="flower" class="display-none">
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <audio id="music" src="/static/music.wav"></audio>
-  <div id="start-action" onClick="reloadPage()">
-    <div class="wrapper">
-      <p>开始</p>
+    <audio id="music" src="/static/music.wav"></audio>
+    <div id="start-action" onClick="reloadPage()">
+      <div class="wrapper">
+        <p>开始</p>
+      </div>
     </div>
-  </div>
+  </main>
   <script>
     var box = document.getElementById("box")
     var content = document.getElementById("content")
@@ -368,7 +382,7 @@
       addnum = setInterval(addNumber, 50);
     }
     function addNumber () {
-      fractionNum.innerHTML = i + "%";
+      fractionNum.innerHTML = "相似度：" + i + "%";
       if (parseInt(i) >= parseInt(max)) {
         flower.classList.remove("display-none")
         document.getElementById("music").play()
@@ -382,7 +396,7 @@
     	playTimeout = setInterval(play,42)
     }
     function play () {
-    	var index = getRandomInt(0,280)
+    	var index = getRandomInt(0,30)
     	photo2.src = '/static/image/p_' + index + '.jpg'
     }
   </script>
