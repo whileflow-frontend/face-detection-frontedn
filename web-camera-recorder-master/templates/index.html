@@ -93,6 +93,9 @@
       max-width: 90%;
       min-width: 450px;
     }
+    .img-block {
+      margin-top: 10px;
+    }
     .img-block:after {
       content: '';
       display: block;
@@ -121,7 +124,7 @@
       display: none;
     }
     #progress-block {
-      margin-top: -20px;
+      margin-top: 60px;
     }
     .progress {
       width: 50%;
@@ -192,10 +195,13 @@
     #description >.wrapper >span.quote {
       color: #FE9C05;
       font-size: 80px;
+      position: absolute;
     }
     #description >.wrapper >span.quote.pre {
-      position: absolute;
       top: -50px;
+    }
+    #description >.wrapper >span.quote.post {
+      right: 0;
     }
     #description >.wrapper >p.title {
       color: #d8d9da;
@@ -246,7 +252,7 @@
         </div>
     	  <div id="result" class="not-show" style="clear:both;">
           <div id="description"><div class="wrapper"></div></div>
-          <div class="progress-block">
+          <div id="progress-block">
             <div class="progress">
               <div class="color" id="proValue"></div>
             </div>
