@@ -9,6 +9,16 @@
       margin: 0;
       padding: 0;
     }
+    body {
+      overflow: hidden;
+    }
+    h1 {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      color: #fff;
+      z-index: 10;
+    }
     .pic {
       position: absolute;
       z-index: 1;
@@ -46,11 +56,11 @@
       border: 0 solid rgba(0, 0, 0, 0);
     }
     #content {
-      width: 70%;
+      width: 90%;
       height: 80%;
-      padding: 5% 15%;
+      padding: 5% 5%;
       font-size: 0;
-      //background-color: rgba(0, 0, 0, 0.9);
+      background-color: rgba(0, 0, 0, 0.9);
       overflow: hidden;
     }
     .display-none {
@@ -63,9 +73,9 @@
       justify-content: center;
       float: left;
       font-size: 36px;
-      width: 30%;
-      margin: 0 10%;
-      height: 350px;
+      width: 48%;
+      margin: 0 1%;
+      height: 450px;
     }
     .person >p {
       color: #d8d9da;
@@ -78,6 +88,7 @@
     .photo {
       max-height: 90%;
       max-width: 90%;
+      min-width: 450px;
     }
     .img-block:after {
       content: '';
@@ -173,6 +184,7 @@
 </head>
 <body>
   <!-- <h1>Streaming Video Recorder</h1> -->
+  <h1>標題：aaaaaaa</h1>
   <div id="recorder">
     <button id="record">Record</button>
     <button id="stop">Stop</button>
@@ -324,7 +336,7 @@
       addnum = setInterval(addNumber, 50);
     }
     function addNumber () {
-      fractionNum.innerHTML = i + "%";
+      fractionNum.innerHTML = "相似度：" + i + "%";
       if (parseInt(i) >= parseInt(max)) {
         flower.classList.remove("display-none")
         document.getElementById("music").play();
@@ -338,7 +350,7 @@
     	playTimeout = setInterval(play,42)
     }
     function play () {
-    	var index = getRandomInt(0,280)
+    	var index = getRandomInt(0,30)
     	photo2.src = '/static/image/p_' + index + '.jpg'
     }
   </script>
