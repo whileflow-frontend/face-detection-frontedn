@@ -4,6 +4,7 @@
   <title>Streaming Video Recorder</title>
   <script src="/static/lib/jquery.min.js"></script>
   <script src="/static/lib/url.js"></script>
+  <script src="/static/lib/description.js"></script>
   <style>
     * {
       margin: 0;
@@ -47,8 +48,8 @@
     }
     #content {
       width: 70%;
-      height: 80%;
-      padding: 5% 15%;
+      height: 100%;
+      padding: 0 15%;
       font-size: 0;
       //background-color: rgba(0, 0, 0, 0.9);
       overflow: hidden;
@@ -109,6 +110,7 @@
     .progress {
       width: 50%;
       margin: 5% 25% 5%;
+      margin-top: 0;
       height: 12px;
       border-radius: 5px;
       background-color: #d4d4d4;
@@ -167,7 +169,34 @@
     }
     #start-action .wrapper>p {  
       color: #d8d9da;
-      font-size: 50px;
+      font-size: 48px;
+    }
+    #description >.wrapper {
+      position: relative;
+    }
+    #description >.wrapper >span.quote {
+      color: #FE9C05;
+      font-size: 80px;
+    }
+    #description >.wrapper >span.quote.pre {
+      position: absolute;
+      top: -50px;
+    }
+    #description >.wrapper >p.title {
+      color: #d8d9da;
+      font-size: 36px;
+      font-style: italic;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    #description >.wrapper >p {
+      color: #d8d9da;
+      font-size: 18px;
+      margin-left: 50px;
+    }
+    #description {
+      display: flex;
+      justify-content: center;
     }
   </style>
 </head>
@@ -199,6 +228,7 @@
         <p>匹配中<span class="dot" id="dot-1">.</span><span class="dot not-show" id="dot-2">.</span><span class="dot not-show" id="dot-3">.</span></p>
       </div>
   	  <div id="result" class="not-show" style="clear:both;">
+        <div id="description"><div class="wrapper"></div></div>
         <div class="progress">
           <div class="color" id="proValue"></div>
         </div>
@@ -234,7 +264,7 @@
 	  var picInterval = null
 	  var getPicTimes = 0
     var capture = false
-    var matchingDotInterval 
+    var matchingDotInterval = undefined
     checkStatus()
 	  play()
     var statusIntervalId = setInterval(function () {
@@ -290,10 +320,24 @@
           i = 0
           max = parseInt(res.score * 100)
 		      starImgUrl = res.star_image_url
-          if (res.star_name != '') {
+          if (res.star_name && res.desc != '') {
             starName = res.star_name
             $('#person-2 >p').text(starName)
             $('#person-2 >p').removeClass('not-show')
+          }
+          res.desc = 3
+          if (res.desc && res.desc != '') {
+            let index = parseInt(res.desc)
+            let propertyName = 'type_' + index
+            let des = typeDescription[propertyName]
+            console.log(des)
+            let appendDes = '<span class="quote pre">“</span><p class="title">' + des.title + '</p>'
+            for (let i in des.text) {
+              appendDes += '<p>' + des.text[i] + '</p>'
+            }
+            appendDes += '<span class="quote post">”</span>'
+            console.log(appendDes)
+            $('#description >.wrapper').append(appendDes)
           }
           photo2.src = starImgUrl
           clearInterval(playTimeout)
@@ -327,8 +371,8 @@
       fractionNum.innerHTML = i + "%";
       if (parseInt(i) >= parseInt(max)) {
         flower.classList.remove("display-none")
-        document.getElementById("music").play();
-        clearInterval(addnum);
+        document.getElementById("music").play()
+        clearInterval(addnum)
       } else {
         i++
         proValue.style.width = i + "%"
