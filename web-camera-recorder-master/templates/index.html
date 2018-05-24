@@ -145,8 +145,13 @@
     var i
     var max
     var addnum
+	var playTimeout
+	var starImgUrl
+	var picInterval
+	var getPicTimes = 0
     var capture = false
     checkStatus()
+	play()
     var statusIntervalId = setInterval(function () {
       checkStatus()
     }, 1000)
@@ -173,23 +178,36 @@
           clearInterval(statusIntervalId)
           beMax()
           $('#video').addClass('not-show')
-          getPic()
+          runPic()
         }
       })
     }
-
+	function runPic () {
+		picInterval = setInterval(getPic,1000)
+	}
     function getPic () {
+	  getPicTimes ++
+		if(getPicTimes == 1){
+			runPhoto()
+		}
       $.ajax({
         url: serviceUrl + 'prediction',
         method: 'GET'
       })
       .done(function (res) {
-        if (res) {
+	  console.log(res.flag)
+        if (res.flag) {
           console.log(res)
           i = 0
           max = parseInt(res.score * 100)
-          runNumber()
-        }
+		  starImgUrl = res.star_image_url
+          runNumber()		  
+		  clearInterval(playTimeout)
+		  photo2.src = starImgUrl
+		  clearInterval(picInterval)
+        }else{
+			
+		}
       })
     }
 
@@ -209,6 +227,13 @@
         proValue.style.width = i + "%"
       }
     }
+	function runPhoto () {
+		playTimeout = setInterval(play,42)
+	}
+	function play () {
+		var index = getRandomInt(0,280)
+		photo2.src = '/static/image/p_'+index+'.jpg'
+	}
   </script>
 </body>
 </html>
