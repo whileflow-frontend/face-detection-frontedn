@@ -3,6 +3,7 @@
 <head>
   <title>Streaming Video Recorder</title>
   <script src="/static/lib/jquery.min.js"></script>
+  <script src="/static/lib/url.js"></script>
   <style>
     * {
       margin: 0;
@@ -49,7 +50,7 @@
       height: 80%;
       padding: 5% 15%;
       font-size: 0;
-      background-color: rgba(0, 0, 0, 0.9);
+      //background-color: rgba(0, 0, 0, 0.9);
       overflow: hidden;
     }
     .display-none {
@@ -57,6 +58,7 @@
     }
     .person {
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       float: left;
@@ -64,6 +66,14 @@
       width: 30%;
       margin: 0 10%;
       height: 350px;
+    }
+    .person >p {
+      color: #d8d9da;
+      font-size: 20px;
+      margin-top: 10px;  
+    }
+    .person >p.not-show {
+      visibility: hidden;
     }
     .photo {
       max-height: 90%;
@@ -114,13 +124,6 @@
     #ration {
       position: relative;
     }
-    #ration:after {
-      content: '',
-      display: block;
-      clear: both;
-      overflow: hidden;
-      visibility: hidden;
-    }
     #fraction {
       font-size: 120px;
       font-weight: bolder;
@@ -136,6 +139,35 @@
     }
     #recorder {
       position: absolute;
+    }
+    #start-action {
+      width: 200px;
+      height: 100%;
+      position: absolute;
+      z-index: 99;
+      right: 0;
+      cursor: pointer;
+    }
+    #start-action .wrapper {
+      background: #333;
+      width: 200px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transform: translateX(200px);
+      transition: transform 1s;
+      -webkit-transition: transform 1s;
+    }
+    #start-action:hover .wrapper{
+      transform: translateX(0px);
+      transition: transform 1s;
+      -webkit-transition: transform 1s;
+    }
+    #start-action .wrapper>p {  
+      color: #d8d9da;
+      font-size: 50px;
     }
   </style>
 </head>
@@ -154,11 +186,13 @@
   <div class="bor" id="box">
     <div class="display-none" id="content">
       <div class="img-block">
-        <div class="person">
+        <div class="person" id="person-1">
           <img src="/static/image/2.jpg" class="photo" id="photo1" alt="">
+          <p class="not-show">本人</p>
         </div>
-        <div class="person">
+        <div class="person" id="person-2">
           <img src="/static/image/3.jpg" class="photo" id="photo2" alt="">
+          <p class="not-show">明星</p>
         </div>
       </div>
       <div id="match-in-progress">
@@ -178,8 +212,12 @@
     </div>
   </div>
   <audio id="music" src="/static/music.wav"></audio>
+  <div id="start-action" onClick="reloadPage()">
+    <div class="wrapper">
+      <p>开始</p>
+    </div>
+  </div>
   <script>
-    const serviceUrl = 'http://172.96.239.77:5000/'
     var box = document.getElementById("box")
     var content = document.getElementById("content")
     var fractionNum = document.getElementById("fraction")
@@ -187,12 +225,13 @@
     var proValue = document.getElementById("proValue")
 	  var photo1 = document.getElementById("photo1")
 	  var photo2 = document.getElementById("photo2")
-    var i
-    var max
-    var addnum
-	  var playTimeout
-	  var starImgUrl
-	  var picInterval
+    var i = undefined
+    var max = undefined
+    var addnum = undefined
+	  var playTimeout = undefined
+	  var starImgUrl = ''
+    var starName = ''
+	  var picInterval = null
 	  var getPicTimes = 0
     var capture = false
     var matchingDotInterval 
@@ -201,6 +240,9 @@
     var statusIntervalId = setInterval(function () {
       checkStatus()
     }, 1000)
+    function reloadPage () {
+      location.reload()
+    }
     function beMax () {
       if (capture) {
         box.classList.add("max-bor")
@@ -248,13 +290,18 @@
           i = 0
           max = parseInt(res.score * 100)
 		      starImgUrl = res.star_image_url
-          $('#match-in-progress').addClass('not-show')
-          $('#result').removeClass('not-show')
+          if (res.star_name != '') {
+            starName = res.star_name
+            $('#person-2 >p').text(starName)
+            $('#person-2 >p').removeClass('not-show')
+          }
           photo2.src = starImgUrl
           clearInterval(playTimeout)
           clearInterval(picInterval)
           clearInterval(matchingDotInterval)
           setTimeout(() => {
+            $('#match-in-progress').addClass('not-show')
+            $('#result').removeClass('not-show')
             runNumber()    
           }, 500)
         }else{	
