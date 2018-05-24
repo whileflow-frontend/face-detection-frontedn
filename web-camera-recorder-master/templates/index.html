@@ -15,9 +15,11 @@
     }
     h1 {
       position: absolute;
-      top: 20px;
-      left: 20px;
-      color: #fff;
+      top: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 50px;
+      color: #FE9C05;
       z-index: 10;
     }
     .pic {
@@ -43,6 +45,7 @@
       width: 600px;
       height: 450px;
       position: absolute;
+      top: 50px;
       border-top: calc(50vh - 225px) solid rgba(0,0,0, 0.6);
       border-bottom: calc(50vh - 225px) solid rgba(0,0,0, 0.6);
       border-left: calc(50vw - 300px) solid rgba(0,0,0, 0.6);
@@ -57,11 +60,10 @@
       border: 0 solid rgba(0, 0, 0, 0);
     }
     #content {
-      width: 90%;
+      width: 100%;
       height: 100%;
-      padding: 0 15%;
       font-size: 0;
-      background-color: rgba(0, 0, 0, 0.9);
+      //background-color: rgba(0, 0, 0, 0.9);
       overflow: hidden;
     }
     .display-none {
@@ -217,8 +219,8 @@
   </header>
   <main>
     <div id="recorder">
-      <button id="record">Record</button>
-      <button id="stop">Stop</button>
+<!--       <button id="record">Record</button>
+      <button id="stop">Stop</button> -->
       <a id="download"></a>
       <script type="text/javascript" src="{{ url_for('static', filename='recorder.js') }}"></script>
     </div>
