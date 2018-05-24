@@ -60,7 +60,7 @@
       align-items: center;
       justify-content: center;
       float: left;
-      font-size: 14px;
+      font-size: 36px;
       width: 30%;
       margin: 0 10%;
       height: 40%;
@@ -68,6 +68,33 @@
     .photo {
       max-height: 90%;
       max-width: 90%;
+    }
+    .img-block:after {
+      content: '';
+      display: block;
+      clear: both;
+      overflow: hidden;
+      visibility: hidden;
+    }
+    #result {
+      position: relative;
+    }
+    #result.not-show{
+      display: none;
+    }
+    #match-in-progress>p {
+      font-size: 60px;
+      color:  #FE9C05;
+      text-align: center;
+    }
+    #match-in-progress>p>span {
+      font-size: 120px;
+    }
+    #match-in-progress.not-show {
+      display: none;
+    }
+    #match-in-progress .dot.not-show {
+      display: none;
     }
     .progress {
       width: 50%;
@@ -84,15 +111,25 @@
       background-color: #03CE41;
       width: 50%;
     }
+    #ration {
+      position: relative;
+    }
+    #ration:after {
+      content: '',
+      display: block;
+      clear: both;
+      overflow: hidden;
+      visibility: hidden;
+    }
     #fraction {
-      font-size: 144px;
+      font-size: 120px;
       font-weight: bolder;
       color: #FE9C05;
       text-align: center;
     }
     #flower {
       position: absolute;
-      top: 56%;
+      top: 0;
       width: 360px;
       left: 50%;
       margin-left: -180px;
@@ -116,20 +153,28 @@
   </div>
   <div class="bor" id="box">
     <div class="display-none" id="content">
-      <div class="person">
-        <img src="/static/image/2.jpg" class="photo" id="photo1" alt="">
+      <div class="img-block">
+        <div class="person">
+          <img src="/static/image/2.jpg" class="photo" id="photo1" alt="">
+        </div>
+        <div class="person">
+          <img src="/static/image/3.jpg" class="photo" id="photo2" alt="">
+        </div>
       </div>
-      <div class="person">
-        <img src="/static/image/3.jpg" class="photo" id="photo2" alt="">
+      <div id="match-in-progress">
+        <p>匹配中<span class="dot" id="dot-1">.</span><span class="dot not-show" id="dot-2">.</span><span class="dot not-show" id="dot-3">.</span></p>
       </div>
-	  <div style="clear:both;"></div>
-      <div class="progress">
-        <div class="color" id="proValue"></div>
+  	  <div id="result" class="not-show" style="clear:both;">
+        <div class="progress">
+          <div class="color" id="proValue"></div>
+        </div>
+        <div class="ratio">
+          <p id="fraction">
+            0%
+          </p>
+          <img src="/static/image/4.gif" alt="" id="flower" class="display-none">
+        </div>
       </div>
-      <p id="fraction">
-        0%
-      </p>
-      <img src="/static/image/4.gif" alt="" id="flower" class="display-none">
     </div>
   </div>
   <audio id="music" src="/static/music.wav"></audio>
@@ -140,18 +185,19 @@
     var fractionNum = document.getElementById("fraction")
     var flower = document.getElementById("flower")
     var proValue = document.getElementById("proValue")
-	var photo1 = document.getElementById("photo1")
-	var photo2 = document.getElementById("photo2")
+	  var photo1 = document.getElementById("photo1")
+	  var photo2 = document.getElementById("photo2")
     var i
     var max
     var addnum
-	var playTimeout
-	var starImgUrl
-	var picInterval
-	var getPicTimes = 0
+	  var playTimeout
+	  var starImgUrl
+	  var picInterval
+	  var getPicTimes = 0
     var capture = false
+    var matchingDotInterval 
     checkStatus()
-	play()
+	  play()
     var statusIntervalId = setInterval(function () {
       checkStatus()
     }, 1000)
@@ -164,60 +210,74 @@
         content.classList.add("display-none")
       }
     }
-	function getRandomInt(min, max) {
-		return Math.floor(Math.random() * (max - min + 1) + min);
-	}
-	function checkStatus () {
+	  function getRandomInt(min, max) {
+  		return Math.floor(Math.random() * (max - min + 1) + min);
+  	}
+	  function checkStatus () {
       $.ajax({
         url: serviceUrl + 'status',
         method: 'GET'
       })
       .done(function (res) {
-        if (res && res.status) {
+        if (res && res.status && res.face_image_url) {
           capture = true
           clearInterval(statusIntervalId)
-          beMax()
-          $('#video').addClass('not-show')
-          runPic()
+          $('#photo1').attr('src', res.face_image_url)
+          setTimeout(() => {
+            beMax()
+            $('#video').addClass('not-show')
+            runPic()
+          }, 500)
         }
       })
     }
-	function runPic () {
-		picInterval = setInterval(getPic,1000)
-	}
+  	function runPic () {
+  		picInterval = setInterval(getPic,1000)
+  	}
     function getPic () {
-	  getPicTimes ++
-		if(getPicTimes == 1){
-			runPhoto()
-		}
+  	  getPicTimes ++
+  		if(getPicTimes == 1){
+  			runPhoto()
+  		}
       $.ajax({
         url: serviceUrl + 'prediction',
         method: 'GET'
       })
       .done(function (res) {
-	  console.log(res.flag)
         if (res.flag) {
-          console.log(res)
           i = 0
           max = parseInt(res.score * 100)
-		  starImgUrl = res.star_image_url
-          runNumber()		  
-		  clearInterval(playTimeout)
-		  photo2.src = starImgUrl
-		  clearInterval(picInterval)
-        }else{
-			
-		}
+		      starImgUrl = res.star_image_url
+          $('#match-in-progress').addClass('not-show')
+          $('#result').removeClass('not-show')
+          photo2.src = starImgUrl
+          clearInterval(playTimeout)
+          clearInterval(picInterval)
+          clearInterval(matchingDotInterval)
+          setTimeout(() => {
+            runNumber()    
+          }, 500)
+        }else{	
+          dotLoop()
+		    }
       })
     }
-
+    function dotLoop () {
+      if ($('#dot-2').hasClass('not-show') && $('#dot-3').hasClass('not-show')) {
+        $('#dot-2').removeClass('not-show')
+      } else if (!$('#dot-2').hasClass('not-show') && $('#dot-3').hasClass('not-show')) {
+        $('#dot-3').removeClass('not-show')
+      } else if (!$('#dot-2').hasClass('not-show') && !$('#dot-3').hasClass('not-show')) {
+        $('#dot-2').addClass('not-show')
+        $('#dot-3').addClass('not-show')
+      }
+    }
     // 滚动数字
     function runNumber () {
       addnum = setInterval(addNumber, 50);
     }
     function addNumber () {
       fractionNum.innerHTML = i + "%";
-      console.log(max, i)
       if (parseInt(i) >= parseInt(max)) {
         flower.classList.remove("display-none")
         document.getElementById("music").play();
@@ -227,13 +287,13 @@
         proValue.style.width = i + "%"
       }
     }
-	function runPhoto () {
-		playTimeout = setInterval(play,42)
-	}
-	function play () {
-		var index = getRandomInt(0,280)
-		photo2.src = '/static/image/p_'+index+'.jpg'
-	}
+    function runPhoto () {
+    	playTimeout = setInterval(play,42)
+    }
+    function play () {
+    	var index = getRandomInt(0,280)
+    	photo2.src = '/static/image/p_' + index + '.jpg'
+    }
   </script>
 </body>
 </html>
